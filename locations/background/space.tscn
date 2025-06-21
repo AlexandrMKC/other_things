@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dd5t380annmvu"]
+
+[ext_resource type="Shader" uid="uid://b4wuqu7i8t8qd" path="res://locations/background/space.gdshader" id="2_lrskr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0q8fy"]
+shader = ExtResource("2_lrskr")
+shader_parameter/space_color = Color(0.000113828, 0.000113828, 0.000113828, 1)
+shader_parameter/star_density = 100.0
+
+[node name="space" type="ColorRect"]
+material = SubResource("ShaderMaterial_0q8fy")
+offset_left = -5196.0
+offset_top = -4887.0
+offset_right = 4804.0
+offset_bottom = 5113.0

@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8553iobq7nuv"]
+
+[ext_resource type="PackedScene" uid="uid://dd5t380annmvu" path="res://locations/background/space.tscn" id="1_reibi"]
+
+[node name="demo_location" type="Node2D"]
+
+[node name="space" parent="." instance=ExtResource("1_reibi")]
+offset_left = -5000.0
+offset_top = -5000.0
+offset_right = 5000.0
+offset_bottom = 5000.0
