@@ -12,7 +12,7 @@ public partial class Player : CharacterBody2D
 	public override void _PhysicsProcess(double delta)
 	{
 		_MouseRotation(delta);
-	
+
 		Vector2 mousePosition = GetGlobalMousePosition();
 		Vector2 toMouse = (mousePosition - GlobalPosition).Normalized();
 		Vector2 perpendicular = new Vector2(-toMouse.Y, toMouse.X);
@@ -23,15 +23,17 @@ public partial class Player : CharacterBody2D
 		MoveAndSlide();
 	}
 
-	private Vector2 Vector2(double v1, double v2)
-	{
-		throw new NotImplementedException();
-	}
-
 	private void _MouseRotation(double delta)
 	{
 		Vector2 mousePos = GetGlobalMousePosition();
 		float targetAngle = (mousePos - GlobalPosition).Angle();
-		Rotation = Mathf.LerpAngle(Rotation, targetAngle,speedRotation*(float)delta);
+		Rotation = Mathf.LerpAngle(Rotation, targetAngle, speedRotation * (float)delta);
+	}
+
+	public void Move(Vector2 direct)
+	{
+		// Vector2 velocity = _player.Velocity;
+		// velocity.X = 0.0f;
+		// velocity.Y = 0.0f;
 	}
 }

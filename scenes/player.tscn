@@ -1,7 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://gd30adgxjhcg"]
+[gd_scene load_steps=9 format=3 uid="uid://gd30adgxjhcg"]
 
 [ext_resource type="Texture2D" uid="uid://xqouxjle2axk" path="res://models/character1.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://bif7bp30ofe3l" path="res://scripts/Player.cs" id="1_g2els"]
+[ext_resource type="Script" uid="uid://dmghl3de5kxp8" path="res://PHFSM/FSM.cs" id="3_dqkch"]
+[ext_resource type="Script" uid="uid://clbilu3bi7pby" path="res://scripts/player_states/Idle.cs" id="4_qlg0r"]
+[ext_resource type="Script" uid="uid://de4qv8vcuprdc" path="res://scripts/player_states/Fly.cs" id="5_qlg0r"]
+[ext_resource type="Script" uid="uid://mdosl8yv45ko" path="res://PHFSM/Transition.cs" id="5_tuyoq"]
+[ext_resource type="Script" uid="uid://c0vkq345edrv0" path="res://scripts/player_states/GuardMove.cs" id="6_fjrip"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3vyb7"]
 size = Vector2(49, 53)
@@ -20,3 +25,31 @@ position = Vector2(13, 0)
 shape = SubResource("RectangleShape2D_3vyb7")
 
 [node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="FSM" type="Node" parent="." node_paths=PackedStringArray("context", "startState")]
+script = ExtResource("3_dqkch")
+context = NodePath("..")
+startState = NodePath("Idle")
+metadata/_custom_type_script = "uid://dmghl3de5kxp8"
+
+[node name="Idle" type="Node" parent="FSM" node_paths=PackedStringArray("PHFSM", "context")]
+script = ExtResource("4_qlg0r")
+name = "idle"
+PHFSM = NodePath("..")
+context = NodePath("../..")
+metadata/_custom_type_script = "uid://clbilu3bi7pby"
+
+[node name="ToFly" type="Node" parent="FSM/Idle" node_paths=PackedStringArray("newState")]
+script = ExtResource("5_tuyoq")
+newState = NodePath("../../Fly")
+metadata/_custom_type_script = "uid://mdosl8yv45ko"
+
+[node name="Move" type="Node" parent="FSM/Idle/ToFly" node_paths=PackedStringArray("context")]
+script = ExtResource("6_fjrip")
+context = NodePath("../../../..")
+
+[node name="Fly" type="Node" parent="FSM" node_paths=PackedStringArray("PHFSM")]
+script = ExtResource("5_qlg0r")
+name = "fly"
+PHFSM = NodePath("..")
+metadata/_custom_type_script = "uid://de4qv8vcuprdc"
