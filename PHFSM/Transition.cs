@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 [GlobalClass]
 public partial class Transition : Node
@@ -9,46 +9,32 @@ public partial class Transition : Node
 	public delegate void TransitionToEventHandler(State newState);
 
 	[Export]
-	public State newState;
-
+	public State transitionTo;
 	
-	private ArrayList _guards = new ArrayList();
+	private List<Guard> _guards = new List<Guard>();
 
 	public void Init()
 	{
-
 		_guards.Clear();
-
 		foreach (var child in GetChildren())
 		{
-			if (child is IGuard)
+			if (child is Guard)
 			{
-				var guard = (IGuard)child;
+				var guard = (Guard)child;
 				_guards.Add(guard);
-				var guard_ = (Node)guard;
-				GD.Print("Transition: add guard " + guard_.Name);
+				GD.Print("Transition " + this.Name + " : add guard " + guard.Name);
 			}
 		}
 	}
 
-	public void CheckGuards()
+	public void Check()
 	{
 		foreach (var guard in _guards)
 		{
-			var guard_ = (IGuard)guard;
-			if (guard_.Guard())
+			if (guard.Check())
 			{
 				GD.Print("TRUE");
 			}
 		}
-	}
-
-	public override void _Ready()
-	{
-	}
-
-
-	public override void _Process(double delta)
-	{
 	}
 }

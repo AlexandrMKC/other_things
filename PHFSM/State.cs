@@ -1,24 +1,26 @@
 using Godot;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 [GlobalClass]
-public partial class State : Node, IState
+public abstract partial class State : Node
 {
     [Export]
     public string name;
 
-    [Export]
-    public Node PHFSM;
+    protected StateMachine _stateMachine;
 
-    [Export]
     public Node context;
-    protected ArrayList _transitions = new ArrayList();
+
+    protected List<Transition> _transitions = new List<Transition>();
 
     public void Init()
     {
-        _transitions.Clear();
-        
+        if(GetParent() is StateMachine _stateMachine)
+
+        context = _stateMachine.context;
+
+        _transitions.Clear(); 
         foreach (var child in GetChildren())
         {
             if (child is Transition)
@@ -26,7 +28,7 @@ public partial class State : Node, IState
                 var transition = (Transition)child;
                 transition.Init();
                 _transitions.Add(transition);
-                GD.Print("State: add transition " + transition.Name);
+                GD.Print("State " + this.Name + ": add transition " + transition.Name);
             }
         }
     }
@@ -35,22 +37,26 @@ public partial class State : Node, IState
     {
         foreach (var transition in _transitions)
         {
-            var transition_ = (Transition)transition;
-            transition_.CheckGuards();
+            transition.Check();
         }
     }
 
-    public void test(double delta)
+    public void PhysicsUpdate(double delta)
     {
         CheckTransitions();
-        PhysicsUpdate(delta);
+        InternalPhysicalProcesses(delta);
     }
 
-    public virtual void Enter() { }
+    public void Update(double delta)
+    {
+        InternalProcesses(delta);
+    }
 
-    public virtual void Exit(){ }
+    public abstract void Enter();
 
-    public virtual void PhysicsUpdate(double delta){ }
+    public abstract void Exit();
 
-    public virtual void Process(double delta){ }
+    public abstract void InternalProcesses(double delta);
+
+    public abstract void InternalPhysicalProcesses(double delta);
 }
