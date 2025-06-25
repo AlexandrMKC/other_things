@@ -39,41 +39,43 @@ public partial class Player : CharacterBody2D
 		velocity_[0] = velocity_[0] - accelerationBackward*inputVector[1]*(float)delta;
 		velocity_[1] = velocity_[1] + accelerationSide*inputVector[2]*(float)delta;
 
-		if(inputVector.Length() > 0.0F){
-			velocity_[0] = velocity_[0] + accelerationForward*inputVector[0]*(float)delta;
-			velocity_[0] = velocity_[0] - accelerationBackward*inputVector[1]*(float)delta;
-			velocity_[1] = velocity_[1] + accelerationSide*inputVector[2]*(float)delta;
-		} else {
-			if(inputVector[0] == 0.0F && velocity_[0] > 0.0F){
-				velocity_[0] = velocity_[0] - deceleration*(float)delta;
+		if (inputVector.Length() > 0.0F)
+		{
+			velocity_[0] = velocity_[0] + accelerationForward * inputVector[0] * (float)delta;
+			velocity_[0] = velocity_[0] - accelerationBackward * inputVector[1] * (float)delta;
+			velocity_[1] = velocity_[1] + accelerationSide * inputVector[2] * (float)delta;
+		}
+		else
+		{
+			if (inputVector[0] == 0.0F && velocity_[0] >= 0.0F)
+			{
+				velocity_[0] = velocity_[0] - deceleration * (float)delta;
+			}
+			if (inputVector[1] == 0.0F && velocity_[0] < 0.0F)
+			{
+				velocity_[0] = velocity_[0] + deceleration * (float)delta;
+			}
+			if(inputVector[2] == 0.0F){
+				velocity_[0] = velocity_[0] - deceleration*(float)delta*perpendicularDirection.Dot(velocity_);
 			}
 		}
-		// if(inputVector[0] > 0.0F){
-		// 	velocity = velocity + parallelDirection*(accelerationForward*inputVector[0])*(float)delta;
-		// 	velocity = velocity + parallelDirection*(accelerationBackward*inputVector[1])*(float)delta;
-		// } else {
-		// 	velocity = velocity - parallelDirection*(deceleration)*(float)delta;
-		// }
 
-		// if(velocity.Dot(parallelDirection) >= maxForwardSpeed){
-		// 	velocity = parallelDirection*maxForwardSpeed; 
-		// }
-
-		if(Mathf.Abs(velocity_[0]) < 5.0F){
-			velocity_[0] = 0.0F;         
+		if (velocity_[0] >= maxForwardSpeed)
+		{
+			velocity_[0] = maxForwardSpeed;
 		}
 
-		
-		//Vector2 velocity = directionParall*(speedForward*inputData[0] - speedBackward*inputData[1]) + directionPerpendicular*speedSide*inputData[2];
+		if (velocity_[0] <= -maxBackwardSpeed)
+		{
+			velocity_[0] = -maxBackwardSpeed;
+		}
 
-		// Vector2 mousePosition = GetGlobalMousePosition();
-		// Vector2 toMouse = (mousePosition - GlobalPosition).Normalized();
-		// Vector2 perpendicular = new Vector2(-toMouse.Y, toMouse.X);
-		// float moveForward = Input.GetActionStrength("move_forward") - Input.GetActionStrength("move_backward");
-		// float strafe = Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left");
-		// Vector2 movement = toMouse * moveForward * speedMovement + perpendicular * strafe * speedMovement;
-		//velocity = new Vector2(Vector2.Right.Dot(parallelDirection)*velocity_[0], -Vector2.Up.Dot(perpendicularDirection)*velocity_[1]);
-		velocity = velocity_.Rotated(Vector2.Right.AngleTo(parallelDirection));
+		if (Mathf.Abs(velocity_[0]) < 1.0F)
+		{
+			velocity_[0] = 0.0F;
+		}
+
+		velocity = new Vector2();
 		Velocity = velocity;
 		MoveAndSlide();
 	}
