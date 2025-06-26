@@ -19,6 +19,8 @@ public partial class Player : CharacterBody2D
 	public float speedRotation { get; set; } = 5.0F;
 	[Export]
 	public float deceleration { get; set; } = 500.0F;
+	[Export]
+	public float minSpeed { get; set; } = 1.0F;
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -29,36 +31,52 @@ public partial class Player : CharacterBody2D
 		Vector2 mousePosition = GetGlobalMousePosition();
 		Vector2 parallelDirection = (mousePosition - GlobalPosition).Normalized();
 		Vector2 perpendicularDirection = new Vector2(-parallelDirection.Y, parallelDirection.X);
-		Vector3 inputVector = new Vector3(Input.GetActionStrength("move_forward"), Input.GetActionStrength("move_backward"), Input.GetActionStrength("move_right") - Input.GetActionStrength("move_left"));
+		Vector4 inputVector = new Vector4(Input.GetActionStrength("move_forward"), Input.GetActionStrength("move_backward"), Input.GetActionStrength("move_right"), Input.GetActionStrength("move_left"));
 
 		Vector2 velocity = Velocity;
-		//velocity = velocity.Rotated(velocity.AngleTo(parallelDirection));
-		Vector2 velocity_ = new Vector2(parallelDirection.Dot(velocity), perpendicularDirection.Dot(velocity));
 
-		velocity_[0] = velocity_[0] + accelerationForward*inputVector[0]*(float)delta;
-		velocity_[0] = velocity_[0] - accelerationBackward*inputVector[1]*(float)delta;
-		velocity_[1] = velocity_[1] + accelerationSide*inputVector[2]*(float)delta;
+		Vector2 i = new Vector2(1.0F, 0.0F);
+		Vector2 j = new Vector2(0.0F, 1.0F);
+		float x1 = parallelDirection.Dot(i)*velocity[0] + parallelDirection.Dot(j)*velocity[1];
+		float y1 = perpendicularDirection.Dot(i)*velocity[0] + perpendicularDirection.Dot(j)*velocity[1];
+		Vector2 velocity_ = new Vector2(x1, y1);
 
-		if (inputVector.Length() > 0.0F)
+
+		velocity_[0] = velocity_[0] + accelerationForward * inputVector[0] * (float)delta;
+		velocity_[0] = velocity_[0] - accelerationBackward * inputVector[1] * (float)delta;
+		velocity_[1] = velocity_[1] + accelerationSide * inputVector[2] * (float)delta;
+		velocity_[1] = velocity_[1] - accelerationSide * inputVector[3] * (float)delta;
+		
+
+
+		if (inputVector[0] == 0.0F && velocity_[0] > 0.0F)
 		{
-			velocity_[0] = velocity_[0] + accelerationForward * inputVector[0] * (float)delta;
-			velocity_[0] = velocity_[0] - accelerationBackward * inputVector[1] * (float)delta;
-			velocity_[1] = velocity_[1] + accelerationSide * inputVector[2] * (float)delta;
-		}
-		else
-		{
-			if (inputVector[0] == 0.0F && velocity_[0] >= 0.0F)
-			{
-				velocity_[0] = velocity_[0] - deceleration * (float)delta;
-			}
-			if (inputVector[1] == 0.0F && velocity_[0] < 0.0F)
-			{
-				velocity_[0] = velocity_[0] + deceleration * (float)delta;
-			}
-			if(inputVector[2] == 0.0F){
-				velocity_[0] = velocity_[0] - deceleration*(float)delta*perpendicularDirection.Dot(velocity_);
+			velocity_[0] = velocity_[0] - deceleration * (float)delta;
+			if(velocity_[0] < minSpeed){
+				velocity_[0] = 0.0F;
 			}
 		}
+		if (inputVector[1] == 0.0F && velocity_[0] < 0.0F)
+		{
+			velocity_[0] = velocity_[0] + deceleration * (float)delta;
+			if(velocity_[0] > -minSpeed){
+				velocity_[0] = 0.0F;
+			}
+		}
+
+		if(inputVector[2] == 0.0F && velocity_[1] > 0.0F){
+			velocity_[1] = velocity_[1] - deceleration*(float)delta;
+			if(velocity_[1] < minSpeed){
+				velocity_[1] = 0.0F;
+			}
+		}
+		if(inputVector[3] == 0.0F && velocity_[1] < 0.0F){
+			velocity_[1] = velocity_[1] + deceleration*(float)delta;
+			if(velocity_[1] > -minSpeed){
+				velocity_[1] = 0.0F;
+			}
+		}
+		
 
 		if (velocity_[0] >= maxForwardSpeed)
 		{
@@ -70,13 +88,20 @@ public partial class Player : CharacterBody2D
 			velocity_[0] = -maxBackwardSpeed;
 		}
 
-		if (Mathf.Abs(velocity_[0]) < 1.0F)
+		if (velocity_[1] >= maxSpeedSide)
 		{
-			velocity_[0] = 0.0F;
+			velocity_[1] = maxSpeedSide;
 		}
 
-		velocity = new Vector2();
-		Velocity = velocity;
+		if (velocity_[1] <= -maxSpeedSide)
+		{
+			velocity_[1] = -maxSpeedSide;
+		}
+
+		float x = i.Dot(parallelDirection)*velocity_[0] + i.Dot(perpendicularDirection)*velocity_[1];
+		float y = j.Dot(parallelDirection)*velocity_[0] + j.Dot(perpendicularDirection)*velocity_[1];
+
+		Velocity = new Vector2(x, y);
 		MoveAndSlide();
 	}
 
