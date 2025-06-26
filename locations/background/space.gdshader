@@ -2,6 +2,7 @@ shader_type canvas_item;
 
 uniform vec3 space_color: source_color = vec3(0.0, 0.0, 0.0); //color of space
 uniform float star_density = 10.; // density
+uniform float star_size_paramter:hint_range(0.0, 1.0, 0.01) = 1.0;
 
 float RandomFloat(vec2 uv){
 	return fract(sin(dot(uv.xy, vec2(12.9898,78.233))) * 43758.5453123);
@@ -15,6 +16,13 @@ vec2 RandomVec2(vec2 uv){
 	return vec2(x, y);
 }
 
+float Star(vec2 uv_star, float brightness){
+	float star = 0.01/(length(uv_star));
+	float rays = max(0.0,(1.0 - abs(uv_star.x*uv_star.y*1000.)))*star;
+	star += rays*brightness;
+	return pow(star, 3);
+}
+
 void vertex() {
 }
 
@@ -23,21 +31,22 @@ void fragment() {
 	
 	vec2 coord = UV*star_density;
 	vec2 cell_position = floor(coord);
-	vec2 uv_cell = abs(fract(coord)-0.5);
+	vec2 uv_cell = fract(coord)-0.5;
 	
-	float ray = max(0.0,(1.0 - uv_cell.x*uv_cell.y*1000.));
-	float star = 0.01/(length(uv_cell));
-	//star = star*ray;
+	float star_size = RandomFloat(cell_position)*star_size_paramter;
 	
-	//float star = 1./abs(uv_plane.y*uv_plane.x*1000.);//0.0001/(length(plane_coord));
-	//float test = 0.005/(length(uv_plane));
-	//float rays = max(0, 1.0 - abs((plane_coord.x*plane_coord.y)*1000.0))*star;
-	//star += rays*10.;
-	//star = pow(star, 3);
-	
-	//COLOR.xyz += uv_cell.x*0.5;
-	//COLOR.xyz += uv_cell.y*0.5;
-	COLOR.xyz += star*ray;
+	for(float x = -1.0; x <= 1.0; x++){
+		for(float y = -1.0; y <= 1.0; y++){
+			vec2 offset = vec2(x,y);
+			vec2 star_position_offset = RandomVec2(cell_position + offset);
+			
+			vec2 uv_star = uv_cell + star_position_offset - offset;
+			vec2 star_position = cell_position - offset;
+			
+			COLOR += Star(uv_star, 1.0)*star_size;
+			
+		}
+	}
 }
 
 //void light() {

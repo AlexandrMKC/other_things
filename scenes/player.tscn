@@ -10,10 +10,13 @@ size = Vector2(49, 53)
 
 [node name="player" type="CharacterBody2D"]
 script = ExtResource("1_g2els")
-accelerationForward = 200.0
+accelerationForward = 500.0
+accelerationBackward = 100.0
+accelerationSide = 500.0
 maxForwardSpeed = 150.0
-maxSpeedSide = 50.0
+maxSpeedSide = 200.0
 speedRotation = 10.0
+deceleration = 900.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708
