@@ -24,10 +24,21 @@ public partial class Player : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		_MouseRotation(delta);
+		//MouseRotation(delta);
+		//Move(delta);
+		MoveAndSlide();
 
-		
+	}
 
+	public void MouseRotation(double delta)
+	{
+		Vector2 mousePos = GetGlobalMousePosition();
+		float targetAngle = (mousePos - GlobalPosition).Angle();
+		Rotation = Mathf.LerpAngle(Rotation, targetAngle, speedRotation * (float)delta);
+	}
+
+	public void Move(double delta)
+	{
 		Vector2 mousePosition = GetGlobalMousePosition();
 		Vector2 parallelDirection = (mousePosition - GlobalPosition).Normalized();
 		Vector2 perpendicularDirection = new Vector2(-parallelDirection.Y, parallelDirection.X);
@@ -102,20 +113,5 @@ public partial class Player : CharacterBody2D
 		float y = j.Dot(parallelDirection)*velocity_[0] + j.Dot(perpendicularDirection)*velocity_[1];
 
 		Velocity = new Vector2(x, y);
-		MoveAndSlide();
-	}
-
-	private void _MouseRotation(double delta)
-	{
-		Vector2 mousePos = GetGlobalMousePosition();
-		float targetAngle = (mousePos - GlobalPosition).Angle();
-		Rotation = Mathf.LerpAngle(Rotation, targetAngle, speedRotation * (float)delta);
-	}
-
-	public void Move(Vector2 direct)
-	{
-		// Vector2 velocity = _player.Velocity;
-		// velocity.X = 0.0f;
-		// velocity.Y = 0.0f;
 	}
 }

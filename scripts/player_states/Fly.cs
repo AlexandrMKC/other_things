@@ -2,7 +2,7 @@ using Godot;
 using System;
 
 [GlobalClass]
-public partial class Idle : State
+public partial class Fly : State
 {
     [Export]
     public Player player;
@@ -21,5 +21,6 @@ public partial class Idle : State
 
     public override void InternalPhysicalProcesses(double delta){
         player.MouseRotation(delta);
+        player.Move(delta);
     }
 }

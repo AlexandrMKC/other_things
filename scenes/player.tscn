@@ -1,9 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://gd30adgxjhcg"]
+[gd_scene load_steps=10 format=3 uid="uid://gd30adgxjhcg"]
 
 [ext_resource type="Texture2D" uid="uid://xqouxjle2axk" path="res://models/character1.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://bif7bp30ofe3l" path="res://scripts/Player.cs" id="1_g2els"]
 [ext_resource type="Script" uid="uid://dmghl3de5kxp8" path="res://PHFSM/FSM.cs" id="3_dqkch"]
 [ext_resource type="Script" uid="uid://bxxumntjki6u5" path="res://scripts/player_states/Idle.cs" id="4_qlg0r"]
+[ext_resource type="Script" uid="uid://cbek277btu6bm" path="res://scripts/player_states/Fly.cs" id="5_qlg0r"]
+[ext_resource type="Script" uid="uid://mdosl8yv45ko" path="res://PHFSM/Transition.cs" id="5_tuyoq"]
+[ext_resource type="Script" uid="uid://bahq7bxsr6iuk" path="res://scripts/player_states/ToFlyGuard.cs" id="6_fjrip"]
+[ext_resource type="Script" uid="uid://3lm3q7hfkhon" path="res://scripts/player_states/ToIdleGuard.cs" id="8_smehm"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3vyb7"]
 size = Vector2(49, 53)
@@ -35,7 +39,36 @@ context = NodePath("..")
 startState = NodePath("Idle")
 metadata/_custom_type_script = "uid://dmghl3de5kxp8"
 
-[node name="Idle" type="Node" parent="FSM"]
+[node name="Idle" type="Node" parent="FSM" node_paths=PackedStringArray("player")]
 script = ExtResource("4_qlg0r")
+player = NodePath("../..")
 name = "idle"
 metadata/_custom_type_script = "uid://bxxumntjki6u5"
+
+[node name="ToFly" type="Node" parent="FSM/Idle" node_paths=PackedStringArray("transitionTo")]
+script = ExtResource("5_tuyoq")
+transitionTo = NodePath("../../Fly")
+metadata/_custom_type_script = "uid://mdosl8yv45ko"
+
+[node name="ToFlyGuard" type="Node" parent="FSM/Idle/ToFly"]
+script = ExtResource("6_fjrip")
+metadata/_custom_type_script = "uid://bahq7bxsr6iuk"
+
+[node name="Fly" type="Node" parent="FSM" node_paths=PackedStringArray("player")]
+script = ExtResource("5_qlg0r")
+player = NodePath("../..")
+name = "fly"
+metadata/_custom_type_script = "uid://cbek277btu6bm"
+
+[node name="ToIdle" type="Node" parent="FSM/Fly" node_paths=PackedStringArray("transitionTo")]
+script = ExtResource("5_tuyoq")
+transitionTo = NodePath("../../Idle")
+metadata/_custom_type_script = "uid://mdosl8yv45ko"
+
+[node name="ToIdleGuard" type="Node" parent="FSM/Fly/ToIdle" node_paths=PackedStringArray("player")]
+script = ExtResource("8_smehm")
+player = NodePath("../../../..")
+metadata/_custom_type_script = "uid://3lm3q7hfkhon"
+
+[connection signal="TransitionTo" from="FSM/Idle/ToFly" to="FSM" method="ChangeState"]
+[connection signal="TransitionTo" from="FSM/Fly/ToIdle" to="FSM" method="ChangeState"]

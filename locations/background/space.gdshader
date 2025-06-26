@@ -41,7 +41,7 @@ void fragment() {
 			vec2 star_position_offset = RandomVec2(cell_position + offset);
 			
 			vec2 uv_star = uv_cell + star_position_offset - offset;
-			vec2 star_position = cell_position - offset;
+			//vec2 star_position = cell_position - offset;
 			
 			COLOR += Star(uv_star, 1.0)*star_size;
 			

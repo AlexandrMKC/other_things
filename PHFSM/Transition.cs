@@ -33,7 +33,7 @@ public partial class Transition : Node
 		{
 			if (guard.Check())
 			{
-				GD.Print("TRUE");
+				EmitSignal(SignalName.TransitionTo, transitionTo);
 			}
 		}
 	}
