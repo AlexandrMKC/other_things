@@ -20,7 +20,6 @@ public partial class Fly : State
     }
 
     public override void InternalPhysicalProcesses(double delta){
-        player.MouseRotation(delta);
         player.Move(delta);
     }
 }

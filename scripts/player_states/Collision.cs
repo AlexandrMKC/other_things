@@ -13,6 +13,7 @@ public partial class Collision : State
 
     public override void Exit(){
         player.Collision();
+        GD.Print("Collision");
     }
 
     public override void InternalProcesses(double delta){

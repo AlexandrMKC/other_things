@@ -20,6 +20,6 @@ public partial class Idle : State
     }
 
     public override void InternalPhysicalProcesses(double delta){
-        player.MouseRotation(delta);
+
     }
 }
