@@ -28,23 +28,23 @@ void vertex() {
 
 void fragment() {
 	COLOR.xyz = space_color;
-	
+
 	vec2 coord = UV*star_density;
 	vec2 cell_position = floor(coord);
 	vec2 uv_cell = fract(coord)-0.5;
-	
+
 	float star_size = RandomFloat(cell_position)*star_size_paramter;
-	
+
 	for(float x = -1.0; x <= 1.0; x++){
 		for(float y = -1.0; y <= 1.0; y++){
 			vec2 offset = vec2(x,y);
 			vec2 star_position_offset = RandomVec2(cell_position + offset);
-			
+
 			vec2 uv_star = uv_cell + star_position_offset - offset;
 			//vec2 star_position = cell_position - offset;
-			
+
 			COLOR += Star(uv_star, 1.0)*star_size;
-			
+
 		}
 	}
 }

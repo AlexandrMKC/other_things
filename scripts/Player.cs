@@ -22,12 +22,17 @@ public partial class Player : CharacterBody2D
 	[Export]
 	public float minSpeed { get; set; } = 1.0F;
 
+	public KinematicCollision2D collisionInfo;
+
 	public override void _PhysicsProcess(double delta)
 	{
-		//MouseRotation(delta);
-		//Move(delta);
-		MoveAndSlide();
+		collisionInfo = MoveAndCollide(Velocity*(float)delta);
+	}
 
+	public void Collision(){
+		Vector2 velocity = Velocity;
+		velocity = velocity.Bounce(collisionInfo.GetNormal());
+		Velocity = velocity;
 	}
 
 	public void MouseRotation(double delta)

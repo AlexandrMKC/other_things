@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://gd30adgxjhcg"]
+[gd_scene load_steps=13 format=3 uid="uid://gd30adgxjhcg"]
 
 [ext_resource type="Texture2D" uid="uid://xqouxjle2axk" path="res://models/character1.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://bif7bp30ofe3l" path="res://scripts/Player.cs" id="1_g2els"]
@@ -8,6 +8,9 @@
 [ext_resource type="Script" uid="uid://mdosl8yv45ko" path="res://PHFSM/Transition.cs" id="5_tuyoq"]
 [ext_resource type="Script" uid="uid://bahq7bxsr6iuk" path="res://scripts/player_states/ToFlyGuard.cs" id="6_fjrip"]
 [ext_resource type="Script" uid="uid://3lm3q7hfkhon" path="res://scripts/player_states/ToIdleGuard.cs" id="8_smehm"]
+[ext_resource type="Script" uid="uid://02mvfjhe7psk" path="res://scripts/player_states/ToCollisionGuard.cs" id="9_y4r1p"]
+[ext_resource type="Script" uid="uid://d2f2wj5awed7t" path="res://scripts/player_states/Collision.cs" id="10_d2wvv"]
+[ext_resource type="Script" uid="uid://c5yxxddrnmhpg" path="res://scripts/player_states/CollisionToFlyGuard.cs" id="11_d2wvv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3vyb7"]
 size = Vector2(49, 53)
@@ -70,5 +73,32 @@ script = ExtResource("8_smehm")
 player = NodePath("../../../..")
 metadata/_custom_type_script = "uid://3lm3q7hfkhon"
 
+[node name="ToCollision" type="Node" parent="FSM/Fly" node_paths=PackedStringArray("transitionTo")]
+script = ExtResource("5_tuyoq")
+transitionTo = NodePath("../../Collision")
+metadata/_custom_type_script = "uid://mdosl8yv45ko"
+
+[node name="ToCollisionGuard" type="Node" parent="FSM/Fly/ToCollision" node_paths=PackedStringArray("player")]
+script = ExtResource("9_y4r1p")
+player = NodePath("../../../..")
+metadata/_custom_type_script = "uid://02mvfjhe7psk"
+
+[node name="Collision" type="Node" parent="FSM" node_paths=PackedStringArray("player")]
+script = ExtResource("10_d2wvv")
+player = NodePath("../..")
+name = "collision"
+metadata/_custom_type_script = "uid://d2f2wj5awed7t"
+
+[node name="ToFly" type="Node" parent="FSM/Collision" node_paths=PackedStringArray("transitionTo")]
+script = ExtResource("5_tuyoq")
+transitionTo = NodePath("../../Fly")
+metadata/_custom_type_script = "uid://mdosl8yv45ko"
+
+[node name="CollisionToFlyGuard" type="Node" parent="FSM/Collision/ToFly"]
+script = ExtResource("11_d2wvv")
+metadata/_custom_type_script = "uid://c5yxxddrnmhpg"
+
 [connection signal="TransitionTo" from="FSM/Idle/ToFly" to="FSM" method="ChangeState"]
 [connection signal="TransitionTo" from="FSM/Fly/ToIdle" to="FSM" method="ChangeState"]
+[connection signal="TransitionTo" from="FSM/Fly/ToCollision" to="FSM" method="ChangeState"]
+[connection signal="TransitionTo" from="FSM/Collision/ToFly" to="FSM" method="ChangeState"]
