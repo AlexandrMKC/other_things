@@ -1,16 +1,16 @@
 [gd_scene load_steps=13 format=3 uid="uid://gd30adgxjhcg"]
 
 [ext_resource type="Texture2D" uid="uid://xqouxjle2axk" path="res://models/character1.png" id="1_3vyb7"]
-[ext_resource type="Script" uid="uid://bif7bp30ofe3l" path="res://scripts/Player.cs" id="1_g2els"]
-[ext_resource type="Script" uid="uid://dmghl3de5kxp8" path="res://PHFSM/FSM.cs" id="3_dqkch"]
-[ext_resource type="Script" uid="uid://bxxumntjki6u5" path="res://scripts/player_states/Idle.cs" id="4_qlg0r"]
-[ext_resource type="Script" uid="uid://cbek277btu6bm" path="res://scripts/player_states/Fly.cs" id="5_qlg0r"]
-[ext_resource type="Script" uid="uid://mdosl8yv45ko" path="res://PHFSM/Transition.cs" id="5_tuyoq"]
-[ext_resource type="Script" uid="uid://bahq7bxsr6iuk" path="res://scripts/player_states/ToFlyGuard.cs" id="6_fjrip"]
-[ext_resource type="Script" uid="uid://3lm3q7hfkhon" path="res://scripts/player_states/ToIdleGuard.cs" id="8_smehm"]
-[ext_resource type="Script" uid="uid://02mvfjhe7psk" path="res://scripts/player_states/ToCollisionGuard.cs" id="9_y4r1p"]
-[ext_resource type="Script" uid="uid://d2f2wj5awed7t" path="res://scripts/player_states/Collision.cs" id="10_d2wvv"]
-[ext_resource type="Script" uid="uid://c5yxxddrnmhpg" path="res://scripts/player_states/CollisionToFlyGuard.cs" id="11_d2wvv"]
+[ext_resource type="Script" uid="uid://bif7bp30ofe3l" path="res://scripts/player/Player.cs" id="1_g2els"]
+[ext_resource type="Script" uid="uid://po2f7uydtahu" path="res://scripts/player/PlayerFSM.cs" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://jn4pe0poj66v" path="res://scripts/player/IdlePlayer.cs" id="4_dqkch"]
+[ext_resource type="Script" uid="uid://fpqp6rnwy6w" path="res://scripts/player/FlyPlayer.cs" id="5_qlg0r"]
+[ext_resource type="Script" uid="uid://rpryd5nirdw2" path="res://scripts/player/TransitionPlayer.cs" id="5_tuyoq"]
+[ext_resource type="Script" uid="uid://bq18dcbux5vno" path="res://scripts/player/IdleToFlyGuard.cs" id="6_fjrip"]
+[ext_resource type="Script" uid="uid://da5eud8c8yyal" path="res://scripts/player/FlyToIdleGuard.cs" id="8_smehm"]
+[ext_resource type="Script" uid="uid://bflml0rkisitp" path="res://scripts/player/FlyToCollisionGuard.cs" id="9_y4r1p"]
+[ext_resource type="Script" uid="uid://b77cskicj5ovv" path="res://scripts/player/CollisionPlayer.cs" id="10_d2wvv"]
+[ext_resource type="Script" uid="uid://bibr1xwuo055o" path="res://scripts/player/CollisionToFlyGuard.cs" id="11_d2wvv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3vyb7"]
 size = Vector2(49, 53)
@@ -19,7 +19,7 @@ size = Vector2(49, 53)
 script = ExtResource("1_g2els")
 accelerationMove = 50.0
 decelerationMove = 50.0
-minSpeedMove = 0.0
+minSpeedMove = 0.1
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708
@@ -32,69 +32,58 @@ shape = SubResource("RectangleShape2D_3vyb7")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
-[node name="FSM" type="Node" parent="." node_paths=PackedStringArray("context", "startState")]
-script = ExtResource("3_dqkch")
-context = NodePath("..")
-startState = NodePath("Idle")
-metadata/_custom_type_script = "uid://dmghl3de5kxp8"
+[node name="PlayerFSM" type="Node" parent="." node_paths=PackedStringArray("initialState")]
+script = ExtResource("3_qhqgy")
+initialState = NodePath("IdlePlayer")
+metadata/_custom_type_script = "uid://po2f7uydtahu"
 
-[node name="Idle" type="Node" parent="FSM" node_paths=PackedStringArray("player")]
-script = ExtResource("4_qlg0r")
-player = NodePath("../..")
+[node name="IdlePlayer" type="Node" parent="PlayerFSM"]
+script = ExtResource("4_dqkch")
 name = "idle"
-metadata/_custom_type_script = "uid://bxxumntjki6u5"
+metadata/_custom_type_script = "uid://jn4pe0poj66v"
 
-[node name="ToFly" type="Node" parent="FSM/Idle" node_paths=PackedStringArray("transitionTo")]
+[node name="ToFly" type="Node" parent="PlayerFSM/IdlePlayer"]
 script = ExtResource("5_tuyoq")
-transitionTo = NodePath("../../Fly")
-metadata/_custom_type_script = "uid://mdosl8yv45ko"
+transitionToStateName = "fly"
+metadata/_custom_type_script = "uid://rpryd5nirdw2"
 
-[node name="ToFlyGuard" type="Node" parent="FSM/Idle/ToFly"]
+[node name="IdleToFlyGuard" type="Node" parent="PlayerFSM/IdlePlayer/ToFly"]
 script = ExtResource("6_fjrip")
-metadata/_custom_type_script = "uid://bahq7bxsr6iuk"
+metadata/_custom_type_script = "uid://bq18dcbux5vno"
 
-[node name="Fly" type="Node" parent="FSM" node_paths=PackedStringArray("player")]
+[node name="FlyPlayer" type="Node" parent="PlayerFSM"]
 script = ExtResource("5_qlg0r")
-player = NodePath("../..")
 name = "fly"
-metadata/_custom_type_script = "uid://cbek277btu6bm"
+metadata/_custom_type_script = "uid://fpqp6rnwy6w"
 
-[node name="ToIdle" type="Node" parent="FSM/Fly" node_paths=PackedStringArray("transitionTo")]
+[node name="ToIdle" type="Node" parent="PlayerFSM/FlyPlayer"]
 script = ExtResource("5_tuyoq")
-transitionTo = NodePath("../../Idle")
-metadata/_custom_type_script = "uid://mdosl8yv45ko"
+transitionToStateName = "idle"
+metadata/_custom_type_script = "uid://rpryd5nirdw2"
 
-[node name="ToIdleGuard" type="Node" parent="FSM/Fly/ToIdle" node_paths=PackedStringArray("player")]
+[node name="FlyToIdleGuard" type="Node" parent="PlayerFSM/FlyPlayer/ToIdle"]
 script = ExtResource("8_smehm")
-player = NodePath("../../../..")
-metadata/_custom_type_script = "uid://3lm3q7hfkhon"
+metadata/_custom_type_script = "uid://da5eud8c8yyal"
 
-[node name="ToCollision" type="Node" parent="FSM/Fly" node_paths=PackedStringArray("transitionTo")]
+[node name="ToCollision" type="Node" parent="PlayerFSM/FlyPlayer"]
 script = ExtResource("5_tuyoq")
-transitionTo = NodePath("../../Collision")
-metadata/_custom_type_script = "uid://mdosl8yv45ko"
+transitionToStateName = "collision"
+metadata/_custom_type_script = "uid://rpryd5nirdw2"
 
-[node name="ToCollisionGuard" type="Node" parent="FSM/Fly/ToCollision" node_paths=PackedStringArray("player")]
+[node name="FlyToCollisionGuard" type="Node" parent="PlayerFSM/FlyPlayer/ToCollision"]
 script = ExtResource("9_y4r1p")
-player = NodePath("../../../..")
-metadata/_custom_type_script = "uid://02mvfjhe7psk"
+metadata/_custom_type_script = "uid://bflml0rkisitp"
 
-[node name="Collision" type="Node" parent="FSM" node_paths=PackedStringArray("player")]
+[node name="CollisionPlayer" type="Node" parent="PlayerFSM"]
 script = ExtResource("10_d2wvv")
-player = NodePath("../..")
 name = "collision"
-metadata/_custom_type_script = "uid://d2f2wj5awed7t"
+metadata/_custom_type_script = "uid://b77cskicj5ovv"
 
-[node name="ToFly" type="Node" parent="FSM/Collision" node_paths=PackedStringArray("transitionTo")]
+[node name="ToFly" type="Node" parent="PlayerFSM/CollisionPlayer"]
 script = ExtResource("5_tuyoq")
-transitionTo = NodePath("../../Fly")
-metadata/_custom_type_script = "uid://mdosl8yv45ko"
+transitionToStateName = "fly"
+metadata/_custom_type_script = "uid://rpryd5nirdw2"
 
-[node name="CollisionToFlyGuard" type="Node" parent="FSM/Collision/ToFly"]
+[node name="CollisionToFlyGuard" type="Node" parent="PlayerFSM/CollisionPlayer/ToFly"]
 script = ExtResource("11_d2wvv")
-metadata/_custom_type_script = "uid://c5yxxddrnmhpg"
-
-[connection signal="TransitionTo" from="FSM/Idle/ToFly" to="FSM" method="ChangeState"]
-[connection signal="TransitionTo" from="FSM/Fly/ToIdle" to="FSM" method="ChangeState"]
-[connection signal="TransitionTo" from="FSM/Fly/ToCollision" to="FSM" method="ChangeState"]
-[connection signal="TransitionTo" from="FSM/Collision/ToFly" to="FSM" method="ChangeState"]
+metadata/_custom_type_script = "uid://bibr1xwuo055o"

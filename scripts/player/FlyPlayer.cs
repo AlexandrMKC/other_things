@@ -2,10 +2,8 @@ using Godot;
 using System;
 
 [GlobalClass]
-public partial class Idle : State
+public partial class FlyPlayer : State<Player>
 {
-    [Export]
-    public Player player;
 
     public override void Enter(){
 
@@ -20,6 +18,6 @@ public partial class Idle : State
     }
 
     public override void InternalPhysicalProcesses(double delta){
-
+        _target.Move(delta);
     }
 }

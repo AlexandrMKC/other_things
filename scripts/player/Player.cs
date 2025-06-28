@@ -22,8 +22,8 @@ public partial class Player : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		collisionInfo = MoveAndCollide(Velocity*(float)delta);
-		GD.Print("Check");
+		//collisionInfo = MoveAndCollide(Velocity*(float)delta);
+		//GD.Print("Physic update Player");
 	}
 
 	public void Collision(){
@@ -60,7 +60,7 @@ public partial class Player : CharacterBody2D
 		if(velocity.Length() >= maxSpeedMove){
 			velocity = maxSpeedMove*velocity.Normalized();
 		}
-		
 		Velocity = velocity;
+		collisionInfo = MoveAndCollide(Velocity*(float)delta);
 	}
 }

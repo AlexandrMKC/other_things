@@ -2,49 +2,50 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-[GlobalClass]
-public partial class FSM : StateMachine
+public abstract partial class FSM<T> : StateMachine<T> where T: Node
 {
-	private Dictionary<string, State> _states = new Dictionary<string, State>();
+	private Dictionary<string, State<T>> _states = new Dictionary<string, State<T>>();
 
 
 	public override void _Ready(){
+
+		base._Ready();
+
 		foreach(var child in GetChildren()){
-			if(child is State){
-				var state = (State)child;
+			if(child is State<T>){
+				var state = (State<T>)child;
 				_states[state.name] = state;
-				state.Init();
-				GD.Print("FSM " + this.Name + ": add state " + state.name);
 			}
 		}
 
-		if (startState != null)
-		{
-			if (!_states.ContainsKey(startState.name))
-			{
-				GD.Print("FSM " + this.Name + " error: start state was not found.");
-				return;
-			}
-			startState.Enter();
-			_currentState = startState;
-			GD.Print("FSM " + this.Name + ": enter to " + _currentState.name + " state");
+		foreach(var state in _states){
+			state.Value.Init();
+			GD.Print("State Machine " + this.Name + ": add state " + state.Value.name);
 		}
-		else
+
+		if (!_states.ContainsKey(initialState.name))
 		{
-			GD.Print("FSM " + this.Name + ": error the initial state is not selected.");
+			GD.Print("State Machine " + this.Name + " error: start state was not found.");
 			return;
 		}
+		initialState.Enter();
+		_currentState = initialState;
+		GD.Print("State Machine " + this.Name + ": enter to " + _currentState.name + " state");
 	}
 
-	public override void ChangeState(State newState)
+	public override void ChangeState(State<T> newState)
 	{
 		if(newState != null){
 			_currentState.Exit();
-			GD.Print("FSM " + this.Name + ": exit " + _currentState.name + " state");
+			GD.Print("State Machine " + this.Name + ": exit " + _currentState.name + " state");
 			_currentState = newState;
 			_currentState.Enter();
-			GD.Print("FSM " + this.Name + ": enter to " + _currentState.name + " state");
+			GD.Print("State Machine " + this.Name + ": enter to " + _currentState.name + " state");
 		}
+	}
+
+	public override State<T> GetStateName(string name){
+		return _states[name];
 	}
 	
 	public override void _PhysicsProcess(double delta)

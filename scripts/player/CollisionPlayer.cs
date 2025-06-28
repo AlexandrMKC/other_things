@@ -2,18 +2,15 @@ using Godot;
 using System;
 
 [GlobalClass]
-public partial class Collision : State
+public partial class CollisionPlayer : State <Player>
 {
-    [Export]
-    public Player player;
 
     public override void Enter(){
 
     }
 
     public override void Exit(){
-        player.Collision();
-        GD.Print("Collision");
+        _target.Collision();
     }
 
     public override void InternalProcesses(double delta){
@@ -21,6 +18,6 @@ public partial class Collision : State
     }
 
     public override void InternalPhysicalProcesses(double delta){
-        
+
     }
 }

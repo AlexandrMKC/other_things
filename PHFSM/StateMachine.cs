@@ -2,17 +2,24 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-[GlobalClass]
-public abstract partial class StateMachine : Node
+public abstract partial class StateMachine<T> : Node where T: Node
 {
-	// controlled object
 	[Export]
-	public Node context;
+	public State<T> initialState;
 
-	[Export]
-	public State startState;
+	public T _target;
+	protected State<T> _currentState;
 
-	protected State _currentState;
+	public override void _Ready(){
+		_target = (T)GetParent();
+		GD.Print("Create State Machine " + this.Name + " target: " + _target.Name);
 
-	public abstract void ChangeState(State newState);
+		if(initialState == null){
+			GD.Print("StateMachine " + this.Name + ": error the initial state is not selected.");
+			return;
+		}
+	}
+
+	public abstract void ChangeState(State<T> newState);
+	public abstract State<T> GetStateName(string name);
 }

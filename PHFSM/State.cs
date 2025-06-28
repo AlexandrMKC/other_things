@@ -2,33 +2,40 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
-[GlobalClass]
-public abstract partial class State : Node
+public abstract partial class State<T>: Node where T: Node
 {
     [Export]
     public string name;
 
-    protected StateMachine _stateMachine;
+    public StateMachine<T> _stateMachine { get; set; }
 
-    public Node context;
+    protected T _target;
 
-    protected List<Transition> _transitions = new List<Transition>();
+    protected List<Transition<T>> _transitions = new List<Transition<T>>();
 
     public void Init()
     {
-        if(GetParent() is StateMachine _stateMachine)
+         _stateMachine = (StateMachine<T>)GetParent();
+        if(_stateMachine == null){
+            GD.Print("State Machine error: _stateMachine == null");
+        }
 
-        context = _stateMachine.context;
+        _target = _stateMachine._target;
+        if(_target == null){
+            GD.Print("State Machine error: _target == null");
+        }
 
         _transitions.Clear(); 
         foreach (var child in GetChildren())
         {
-            if (child is Transition)
+            if (child is Transition<T>)
             {
-                var transition = (Transition)child;
+                var transition = (Transition<T>)child;
                 transition.Init();
+                transition.TransitionTo += _stateMachine.ChangeState;
                 _transitions.Add(transition);
-                GD.Print("State " + this.Name + ": add transition " + transition.Name);
+
+                GD.Print("State Machine" + this.Name + " state " + this.Name + ": add transition " + transition.Name);
             }
         }
     }
@@ -43,8 +50,10 @@ public abstract partial class State : Node
 
     public void PhysicsUpdate(double delta)
     {
-        CheckTransitions();
         InternalPhysicalProcesses(delta);
+        GD.Print("STATE Internal " + this.Name);
+        CheckTransitions();
+        GD.Print("STATE CheckTransition " + this.Name);
     }
 
     public void Update(double delta)
