@@ -51,9 +51,7 @@ public abstract partial class State<T>: Node where T: Node
     public void PhysicsUpdate(double delta)
     {
         InternalPhysicalProcesses(delta);
-        GD.Print("STATE Internal " + this.Name);
         CheckTransitions();
-        GD.Print("STATE CheckTransition " + this.Name);
     }
 
     public void Update(double delta)

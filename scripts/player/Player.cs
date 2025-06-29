@@ -32,7 +32,7 @@ public partial class Player : CharacterBody2D
 		Velocity = velocity;
 	}
 
-	public void Move(double delta)
+	public void ControllMove(double delta)
 	{
 		Vector2 inputVector = new Vector2(
 			Input.GetActionStrength("move_right")-Input.GetActionStrength("move_left"), 
@@ -60,6 +60,22 @@ public partial class Player : CharacterBody2D
 		if(velocity.Length() >= maxSpeedMove){
 			velocity = maxSpeedMove*velocity.Normalized();
 		}
+		Velocity = velocity;
+		collisionInfo = MoveAndCollide(Velocity*(float)delta);
+	}
+
+	public void ConstVelocityMove(double delta, Vector2 velocity){
+		
+		// zero speed
+		if(velocity.Length() < minSpeedMove){
+			velocity = new Vector2(0.0F, 0.0F);
+		}
+
+		// max speed
+		if(velocity.Length() >= maxSpeedMove){
+			velocity = maxSpeedMove*velocity.Normalized();
+		}
+		
 		Velocity = velocity;
 		collisionInfo = MoveAndCollide(Velocity*(float)delta);
 	}

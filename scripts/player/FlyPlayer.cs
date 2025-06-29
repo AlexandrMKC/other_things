@@ -18,6 +18,6 @@ public partial class FlyPlayer : State<Player>
     }
 
     public override void InternalPhysicalProcesses(double delta){
-        _target.Move(delta);
+        _target.ControllMove(delta);
     }
 }

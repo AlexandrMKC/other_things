@@ -20,6 +20,7 @@ script = ExtResource("1_g2els")
 accelerationMove = 50.0
 decelerationMove = 50.0
 minSpeedMove = 0.1
+collision_parameter = 1.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5708

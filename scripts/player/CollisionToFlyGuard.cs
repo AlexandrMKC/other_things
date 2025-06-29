@@ -6,6 +6,6 @@ public partial class CollisionToFlyGuard : Guard<Player>
 {
 
     public override bool Check(){
-        return true;
+        return true; //_transition.timer.TimeLeft <= 0;
     }
 }
