@@ -40,16 +40,22 @@ public abstract partial class FSM<T> : StateMachine<T> where T: Node
 
     public override void ChangeState(State<T> state)
     {
-        
+        if(state != null){
+			_currentState.Exit();
+			GD.Print("  State Machine " + this.Name + ": exit " + _currentState.name + " state");
+			_currentState = state;
+			_currentState.Enter();
+			GD.Print("State Machine " + this.Name + ": enter to " + _currentState.name + " state");
+		}
     }
 
     public override void PhysicsUpdate(double delta)
     {
-        
+        _currentState.PhysicsUpdate(delta);
     }
 
     public override void Update(double delta)
     {
-        
+        _currentState.Update(delta);
     }
 }

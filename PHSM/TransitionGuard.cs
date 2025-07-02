@@ -13,6 +13,7 @@ public abstract partial class TransitionGuard<T> : Transition<T> where T : Node
             if (child is Guard<T>)
             {
                 var guard = (Guard<T>)child;
+                guard.Init();
                 _guards.Add(guard);
                 GD.Print("          Transition " + this.Name + ": add guard " + guard.Name);
             }
@@ -25,6 +26,7 @@ public abstract partial class TransitionGuard<T> : Transition<T> where T : Node
             if (guard.Check())
             {
                 _stateMachine.ChangeState(transitionTo);
+                return;
             }
         }
     }

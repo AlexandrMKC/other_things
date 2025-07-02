@@ -11,7 +11,7 @@ public abstract partial class StateMachine<T> : Node where T : Node
 	[Export]
 	public State<T> initialState;
 
-	public State<T> _currentState { get; private set; }
+	public State<T> _currentState { get; set; }
 
 	// set up method
 	public void Build()

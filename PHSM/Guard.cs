@@ -3,8 +3,8 @@ using System;
 
 public abstract partial class Guard<T> : Node where T : Node
 {
-    protected T _target { get; private set; }
-    protected Transition<T> _transition;
+    public T _target { get; set; }
+    public Transition<T> _transition;
 
     public void Init()
     {
@@ -14,6 +14,10 @@ public abstract partial class Guard<T> : Node where T : Node
             var transition = (Transition<T>)parent;
             _transition = transition;
             _target = transition._target;
+            if (_target == null)
+            {
+                GD.Print("EGJEBJEBJE");
+            }
         }
     }
 

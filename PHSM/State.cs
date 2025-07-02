@@ -43,23 +43,30 @@ public abstract partial class State<T>: Node where T: Node
         }
     }
 
+    public void CheckTransitions()
+    {
+        foreach (var transition in _transitions)
+        {
+            transition.Check();
+        }
+    }
 
-    // public void PhysicsUpdate(double delta)
-    // {
-    //     InternalPhysicalProcesses(delta);
-    //     CheckTransitions();
-    // }
+    public void PhysicsUpdate(double delta)
+    {
+        InternalPhysicalProcesses(delta);
+        CheckTransitions();
+    }
 
-    // public void Update(double delta)
-    // {
-    //     InternalProcesses(delta);
-    // }
+    public void Update(double delta)
+    {
+        InternalProcesses(delta);
+    }
 
     public abstract void Enter();
 
     public abstract void Exit();
 
-    // public abstract void InternalProcesses(double delta);
+    public abstract void InternalProcesses(double delta);
 
-    // public abstract void InternalPhysicalProcesses(double delta);
+    public abstract void InternalPhysicalProcesses(double delta);
 }
