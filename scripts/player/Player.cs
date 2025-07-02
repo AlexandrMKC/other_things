@@ -47,12 +47,13 @@ public partial class Player : CharacterBody2D
 			Rotation = Mathf.LerpAngle(Rotation, inputVector.Angle(), speedRotation * (float)delta);
 		}
 
-		if(inputVector.Length() == 0.0F && velocity.Length() >= minSpeedMove){
+		if(inputVector.Length() == 0.0F && velocity.Length() >= delta*decelerationMove){
 			velocity = velocity - decelerationMove*velocity.Normalized()*(float)delta;
 		}
-		
+
 		// zero speed
-		if(velocity.Length() < minSpeedMove){
+		if (velocity.Length() < delta*decelerationMove)
+		{
 			velocity = new Vector2(0.0F, 0.0F);
 		}
 
@@ -75,7 +76,8 @@ public partial class Player : CharacterBody2D
 		if(velocity.Length() >= maxSpeedMove){
 			velocity = maxSpeedMove*velocity.Normalized();
 		}
-		
+
+		//GD.Print( "V == == " + velocity);
 		Velocity = velocity;
 		collisionInfo = MoveAndCollide(Velocity*(float)delta);
 	}
